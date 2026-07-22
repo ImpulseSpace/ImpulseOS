@@ -510,7 +510,22 @@ break;
 
 
 
+case "help":
 
+print(
+`su
+addid
+upload
+id
+removeid
+listid
+fastfetch
+clear
+sudo
+help`
+);
+
+break;
 
 
 case "id":
@@ -678,26 +693,68 @@ case "fastfetch":
 
 
 
-print(`
-
-        .--.
-       |o_o |
-       |:_/ |
-      //   \\\\
-     (|     | )
-    /'\\_   _/\\
-    \\___)=(___/
-
-Hello World!
+print(`                                                   
+                                                   
+                 ████████████                      
+             ███████████████████                   
+          █████████                                
+        ███████                                    
+       ██████         █████                        
+     ██████ ███    ███████████     ████████        
+    ██████ █████  ████████████████████████         
+   ██████  ███   ███████████████████               
+   █████   █     ███████████████     ████          
+  ██████ █████    █████████████   █████████        
+  ██████████████   ███████████                     
+  █████ ███  █      █████████                █     
+  █████ ██          █████████                ██    
+  █████ ████      ██████████████            ███    
+   ███████████████████████████████████████████     
+   ███████ ███████████████████████████████████     
+    ██████████████████████████████████████████     
+     ███████████████████████    █████████████      
+     ███████████████     ████ ██████████████       
+       ████████ ██████████████████  ███████        
+         ████████████████████████████████          
+           ████████████████████████████            
+             ████████████████████████              
+                 ████████████████                  
 
 `);
-
+        
+print(`\nImpulseOS - ver-0.001-ALPHA`);
+print(`\nИнтересно, да?`);
+setTimeout(() => {
+}, 3000);
+print(`\n.`);
+setTimeout(() => {
+}, 3000);
+print(`\n.`);
+setTimeout(() => {
+}, 3000);
+print(`\n.`);
+setTimeout(() => {
+}, 3000);
+print(`\nОбычный HTML-файл, хе :3`);
 
 break;
 
 
 
+case "sudo":
 
+setTimeout(()=>{
+
+
+window.location.href=
+"https://плюс.space";
+
+
+},700);
+
+
+
+break;
 
 
 
@@ -750,43 +807,74 @@ createInput();
 function bootSequence(){
 
 
-
 terminal.innerHTML="";
-
 
 
 let boot=[
 
-
-"BIOS v2.1.4",
-
-"Checking hardware........ OK",
-
-"CPU: Virtual x86_64",
-
-"Memory test: 4096 MB OK",
-
+"BIOS v3.7.2",
+"Initializing hardware detection...",
+"CPU: Virtual x86 Processor",
+"RAM: 128KB detected",
+"GPU: Virtual Framebuffer Device",
+"Keyboard: OK",
+"Mouse: OK",
+"Storage: Virtual Disk 1MB",
+"Network Controller: OK",
 "",
-
-"Loading Linux kernel........",
-
-"[ OK ] Mounting virtual filesystem",
-
-"[ OK ] Starting database service",
-
-"[ OK ] Starting terminal daemon",
-
-"[ OK ] Network initialized",
-
+"Loading Arch Linux kernel...",
+"Loading initial ramdisk...",
+"Decompressing kernel image.............. OK",
+"Mounting root filesystem...",
 "",
-
-"Linux Emulator 1.0",
-
+"[    0.000001] Linux version 6.8.7-arch1-1",
+"[    0.012451] Command line: root=/dev/vda1 rw",
+"[    0.023451] x86/fpu: Supporting XSAVE feature",
+"[    0.034882] ACPI: Interpreter enabled",
+"[    0.045221] PCI: Using configuration type 1",
+"[    0.056321] clocksource: tsc: mask",
+"[    0.067431] Memory: 128KB available",
 "",
-
-"Type fastfetch for system info.",
-
+"Starting systemd...",
+"",
+"[ OK ] Started Load Kernel Modules",
+"[ OK ] Started Create Static Device Nodes",
+"[ OK ] Started udev Kernel Device Manager",
+"[ OK ] Started Journal Service",
+"[ OK ] Mounted Kernel Debug File System",
+"[ OK ] Mounted Kernel Configuration File System",
+"",
+"[ OK ] Reached target Local File Systems",
+"[ OK ] Reached target Path Units",
+"[ OK ] Reached target Socket Units",
+"[ OK ] Reached target System Initialization",
+"",
+"Starting Network Manager...",
+"[ OK ] Started Network Manager",
+"[ OK ] Connected to virtual network",
+"",
+"Starting user services...",
+"[ OK ] Started Terminal Emulator Service",
+"[ OK ] Started Database Storage Service",
+"[ OK ] Started Image Handler Service",
+"[ OK ] Started Virtual Shell",
+"",
+"Loading environment variables...",
+"Loading user database...",
+"Checking local storage...",
+"Checking permissions...",
+"Updating command cache...",
+"",
+"Starting interactive shell...",
+"",
+"ImpulseOS",
+"Kernel 6.8.7-arch1-1 x86_64",
+"",
+"Welcome to the ImpulseOS terminal.",
+"",
 ""
+
+
 
 ];
 
@@ -796,8 +884,7 @@ let i=0;
 
 
 
-let timer=
-setInterval(function(){
+let timer=setInterval(()=>{
 
 
 print(
@@ -816,19 +903,34 @@ if(i>=boot.length){
 clearInterval(timer);
 
 
+
+setTimeout(()=>{
+
+
+terminal.innerHTML="";
+
+
+print("");
+
+
+
 createInput();
 
 
+
+},700);
+
+
+
 }
 
 
 
-},250);
+},80);
 
 
 
 }
-
 
 
 
