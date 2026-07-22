@@ -1,350 +1,844 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
+
 <meta charset="UTF-8">
 <title>Linux Terminal Emulator</title>
 
+
 <style>
-body {
-    margin: 0;
-    background: black;
-    color: white;
-    font-family: "Courier New", monospace;
-    height: 100vh;
-    overflow: hidden;
+
+html,body{
+
+    margin:0;
+    padding:0;
+
+    background:black;
+    color:white;
+
+    font-family:
+    "Courier New",
+    monospace;
+
+    height:100%;
+
 }
 
-#terminal {
-    padding: 15px;
-    height: 100vh;
-    box-sizing: border-box;
-    overflow-y: auto;
-    white-space: pre-wrap;
+
+#terminal{
+
+    padding:15px;
+
+    height:100vh;
+
+    box-sizing:border-box;
+
+    overflow-y:auto;
+
+    white-space:pre-wrap;
+
 }
 
-.line {
-    display: flex;
+
+.line{
+
+    display:flex;
+
 }
 
-.prompt {
-    color: white;
+
+.prompt{
+
+    white-space:pre;
+
 }
 
-input {
-    background: black;
-    color: white;
-    border: none;
-    outline: none;
-    font-family: inherit;
-    flex: 1;
+
+input{
+
+    background:black;
+
+    color:white;
+
+    border:none;
+
+    outline:none;
+
+    font-family:
+    "Courier New",
+    monospace;
+
+    flex:1;
+
 }
 
-img {
-    max-width: 300px;
-    max-height: 300px;
-    display: block;
-    margin-top: 10px;
-    border: 1px solid white;
+
+
+img{
+
+    max-width:350px;
+
+    max-height:350px;
+
+    border:1px solid white;
+
+    margin-top:10px;
+
 }
+
+
 </style>
+
+
 </head>
 
 
 <body>
 
+
 <div id="terminal"></div>
+
 
 
 <script>
 
-let terminal = document.getElementById("terminal");
 
-let isRoot = false;
+let terminal =
+document.getElementById("terminal");
 
-let database = JSON.parse(localStorage.getItem("linuxIDs") || "{}");
+
+
+let isRoot=false;
+
+
+
+let database =
+JSON.parse(
+localStorage.getItem("linuxIDs")
+||
+"{}"
+);
+
 
 
 function saveDB(){
-    localStorage.setItem(
-        "linuxIDs",
-        JSON.stringify(database)
-    );
+
+localStorage.setItem(
+"linuxIDs",
+JSON.stringify(database)
+);
+
 }
+
 
 
 function print(text=""){
-    let div=document.createElement("div");
-    div.textContent=text;
-    terminal.appendChild(div);
-    terminal.scrollTop=terminal.scrollHeight;
+
+
+let div=document.createElement("div");
+
+div.textContent=text;
+
+terminal.appendChild(div);
+
+
+terminal.scrollTop=
+terminal.scrollHeight;
+
+
 }
+
+
 
 
 function printImage(src){
-    let img=document.createElement("img");
-    img.src=src;
-    terminal.appendChild(img);
-}
 
 
+let img=document.createElement("img");
 
-function createInput(){
+img.src=src;
 
-    let line=document.createElement("div");
-    line.className="line";
 
-    let prompt=document.createElement("span");
-    prompt.className="prompt";
-    prompt.textContent=
-        isRoot ? "root@linux:~# " : "user@linux:~$ ";
+terminal.appendChild(img);
 
-    let input=document.createElement("input");
-
-    line.appendChild(prompt);
-    line.appendChild(input);
-
-    terminal.appendChild(line);
-
-    input.focus();
-
-    input.addEventListener("keydown", e=>{
-
-        if(e.key==="Enter"){
-
-            let command=input.value.trim();
-
-            line.removeChild(input);
-
-            let text=document.createElement("span");
-            text.textContent=command;
-            line.appendChild(text);
-
-            execute(command);
-
-        }
-
-    });
 
 }
 
 
 
 function requireRoot(){
-    if(!isRoot){
-        print("Permission denied: root required.");
-        return false;
-    }
-    return true;
+
+
+if(!isRoot){
+
+print(
+"Permission denied: root required."
+);
+
+return false;
+
 }
+
+
+return true;
+
+}
+
+
+
+
+function createInput(){
+
+
+let line=
+document.createElement("div");
+
+
+line.className="line";
+
+
+
+let prompt=
+document.createElement("span");
+
+
+
+prompt.className="prompt";
+
+
+
+prompt.textContent=
+isRoot
+?
+"root@linux:~# "
+:
+"user@linux:~$ ";
+
+
+
+let input=
+document.createElement("input");
+
+
+
+line.appendChild(prompt);
+
+line.appendChild(input);
+
+
+
+terminal.appendChild(line);
+
+
+
+input.focus();
+
+
+
+input.addEventListener(
+"keydown",
+function(e){
+
+
+if(e.key==="Enter"){
+
+
+let command=input.value.trim();
+
+
+
+input.remove();
+
+
+
+let text=
+document.createElement("span");
+
+text.textContent=command;
+
+
+line.appendChild(text);
+
+
+
+execute(command);
+
+
+}
+
+
+}
+
+);
+
+
+}
+
+
+
+
+function uploadImage(id){
+
+
+
+if(!database[id]){
+
+
+print(
+"ID not found."
+);
+
+return;
+
+}
+
+
+
+let fileInput=
+document.createElement("input");
+
+
+
+fileInput.type="file";
+
+fileInput.accept="image/*";
+
+
+
+fileInput.onchange=function(e){
+
+
+let file=
+e.target.files[0];
+
+
+
+let reader=
+new FileReader();
+
+
+
+reader.onload=function(){
+
+
+database[id].image=
+reader.result;
+
+
+
+saveDB();
+
+
+
+print(
+"Image attached."
+);
+
+
+
+};
+
+
+
+reader.readAsDataURL(file);
+
+
+
+};
+
+
+
+fileInput.click();
+
+
+
+}
+
 
 
 
 function execute(cmd){
 
-    let args=cmd.split(" ");
 
-    let command=args[0];
+let args=
+cmd.split(" ");
 
 
-    switch(command){
 
+let command=args[0];
 
-        case "su":
 
-            if(args[1]==="PASSWORD"){
-                isRoot=true;
-                print("Root access granted.");
-            }
-            else{
-                print("Wrong password.");
-            }
 
-        break;
+switch(command){
 
 
 
-        case "addid":
+case "su":
 
-            if(!requireRoot()) break;
 
-            if(args.length < 5){
-                print("Usage: addid <ID> <x> <y> <z> <image>");
-                break;
-            }
+if(args[1]==="PASSWORD"){
 
 
-            let id=args[1];
+isRoot=true;
 
+print(
+"Root access granted."
+);
 
-            if(database[id]){
-                print("ID already exists.");
-                break;
-            }
 
+}
+else{
 
-            database[id]={
-                x:args[2],
-                y:args[3],
-                z:args[4],
-                image:null
-            };
+print(
+"Wrong password."
+);
 
+}
 
-            // картинка через файл
-            if(args[5]){
-                database[id].image=args[5];
-            }
 
+break;
 
-            saveDB();
 
-            print("ID added.");
 
-        break;
 
+case "addid":
 
 
-        case "id":
 
-            if(!args[1]){
-                print("Usage: id <ID>");
-                break;
-            }
+if(!requireRoot())
+break;
 
 
-            let target=args[1];
 
+if(args.length<5){
 
-            if(!database[target]){
-                print("ID not found.");
-                break;
-            }
 
+print(
+"Usage: addid <ID> <x> <y> <z>"
+);
 
-            let obj=database[target];
 
+break;
 
-            print(
-`ID: ${target}
-X: ${obj.x}
-Y: ${obj.y}
-Z: ${obj.z}`
-            );
-
-
-            if(obj.image){
-                printImage(obj.image);
-            }
-
-
-            delete database[target];
-
-            saveDB();
-
-            print("ID removed from database.");
-
-        break;
-
-
-
-
-        case "removeid":
-
-            if(!requireRoot()) break;
-
-
-            if(!database[args[1]]){
-                print("ID not found.");
-                break;
-            }
-
-
-            delete database[args[1]];
-
-            saveDB();
-
-            print("Removed.");
-
-        break;
-
-
-
-
-        case "listid":
-
-            if(!requireRoot()) break;
-
-
-            let keys=Object.keys(database);
-
-
-            if(keys.length===0){
-                print("Database empty.");
-                break;
-            }
-
-
-            keys.forEach(k=>{
-                let v=database[k];
-
-                print(
-`${k}: X=${v.x} Y=${v.y} Z=${v.z}`
-                );
-
-            });
-
-        break;
-
-
-
-        case "fastfetch":
-
-            print(
-`
-        .--.
-       |o_o |
-       |:_/ |
-      //   \\ \\
-     (|     | )
-    /'\\_   _/\\
-    \\___)=(___/
-
-Hello World!
-`
-            );
-
-        break;
-
-
-
-        case "clear":
-
-            terminal.innerHTML="";
-            break;
-
-
-
-        default:
-
-            if(command!=="")
-                print(command+": command not found");
-
-    }
-
-
-    createInput();
 
 }
 
 
 
-print("Linux Terminal Emulator");
-print("Type 'fastfetch' for test.");
-print("");
+let newID=args[1];
+
+
+
+if(database[newID]){
+
+
+print(
+"ID already exists."
+);
+
+
+break;
+
+
+}
+
+
+
+
+database[newID]={
+
+
+x:args[2],
+
+y:args[3],
+
+z:args[4],
+
+image:null
+
+
+};
+
+
+
+saveDB();
+
+
+
+print(
+"ID added."
+);
+
+
+
+break;
+
+
+
+
+
+case "upload":
+
+
+
+if(!requireRoot())
+break;
+
+
+
+if(!args[1]){
+
+
+print(
+"Usage: upload <ID>"
+);
+
+
+break;
+
+
+}
+
+
+
+uploadImage(args[1]);
+
+
+
+break;
+
+
+
+
+
+
+case "id":
+
+
+
+let id=args[1];
+
+
+
+if(!database[id]){
+
+
+print(
+"ID not found."
+);
+
+
+break;
+
+
+}
+
+
+
+
+let data=
+database[id];
+
+
+
+print(
+`ID: ${id}
+
+X: ${data.x}
+Y: ${data.y}
+Z: ${data.z}`
+);
+
+
+
+if(data.image)
+printImage(data.image);
+
+
+
+delete database[id];
+
+saveDB();
+
+
+
+print(
+"ID removed from database."
+);
+
+
+
+break;
+
+
+
+
+
+
+case "removeid":
+
+
+
+if(!requireRoot())
+break;
+
+
+
+if(!database[args[1]]){
+
+
+print(
+"ID not found."
+);
+
+
+break;
+
+
+}
+
+
+
+delete database[args[1]];
+
+
+saveDB();
+
+
+
+print(
+"Removed."
+);
+
+
+
+break;
+
+
+
+
+
+
+
+case "listid":
+
+
+
+if(!requireRoot())
+break;
+
+
+
+let ids=
+Object.keys(database);
+
+
+
+if(ids.length===0){
+
+
+print(
+"Database empty."
+);
+
+
+break;
+
+
+}
+
+
+
+
+ids.forEach(id=>{
+
+
+let d=
+database[id];
+
+
+print(
+`${id}: X=${d.x} Y=${d.y} Z=${d.z}`
+);
+
+
+});
+
+
+break;
+
+
+
+
+
+
+
+case "fastfetch":
+
+
+
+print(`
+
+        .--.
+       |o_o |
+       |:_/ |
+      //   \\\\
+     (|     | )
+    /'\\_   _/\\
+    \\___)=(___/
+
+Hello World!
+
+`);
+
+
+break;
+
+
+
+
+
+
+
+case "clear":
+
+
+
+terminal.innerHTML="";
+
+
+break;
+
+
+
+
+
+
+default:
+
+
+
+if(command!==""){
+
+
+print(
+command+
+": command not found"
+);
+
+
+}
+
+
+
+}
+
+
 
 createInput();
 
+
+
+}
+
+
+
+
+
+
+function bootSequence(){
+
+
+
+terminal.innerHTML="";
+
+
+
+let boot=[
+
+
+"BIOS v2.1.4",
+
+"Checking hardware........ OK",
+
+"CPU: Virtual x86_64",
+
+"Memory test: 4096 MB OK",
+
+"",
+
+"Loading Linux kernel........",
+
+"[ OK ] Mounting virtual filesystem",
+
+"[ OK ] Starting database service",
+
+"[ OK ] Starting terminal daemon",
+
+"[ OK ] Network initialized",
+
+"",
+
+"Linux Emulator 1.0",
+
+"",
+
+"Type fastfetch for system info.",
+
+""
+
+];
+
+
+
+let i=0;
+
+
+
+let timer=
+setInterval(function(){
+
+
+print(
+boot[i]
+);
+
+
+
+i++;
+
+
+
+if(i>=boot.length){
+
+
+clearInterval(timer);
+
+
+createInput();
+
+
+}
+
+
+
+},250);
+
+
+
+}
+
+
+
+
+bootSequence();
+
+
+
 </script>
 
+
 </body>
+
 </html>
