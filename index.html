@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Linux Terminal Emulator</title>
+
+<style>
+body {
+    margin: 0;
+    background: black;
+    color: white;
+    font-family: "Courier New", monospace;
+    height: 100vh;
+    overflow: hidden;
+}
+
+#terminal {
+    padding: 15px;
+    height: 100vh;
+    box-sizing: border-box;
+    overflow-y: auto;
+    white-space: pre-wrap;
+}
+
+.line {
+    display: flex;
+}
+
+.prompt {
+    color: white;
+}
+
+input {
+    background: black;
+    color: white;
+    border: none;
+    outline: none;
+    font-family: inherit;
+    flex: 1;
+}
+
+img {
+    max-width: 300px;
+    max-height: 300px;
+    display: block;
+    margin-top: 10px;
+    border: 1px solid white;
+}
+</style>
+</head>
+
+
+<body>
+
+<div id="terminal"></div>
+
+
+<script>
+
+let terminal = document.getElementById("terminal");
+
+let isRoot = false;
+
+let database = JSON.parse(localStorage.getItem("linuxIDs") || "{}");
+
+
+function saveDB(){
+    localStorage.setItem(
+        "linuxIDs",
+        JSON.stringify(database)
+    );
+}
+
+
+function print(text=""){
+    let div=document.createElement("div");
+    div.textContent=text;
+    terminal.appendChild(div);
+    terminal.scrollTop=terminal.scrollHeight;
+}
+
+
+function printImage(src){
+    let img=document.createElement("img");
+    img.src=src;
+    terminal.appendChild(img);
+}
+
+
+
+function createInput(){
+
+    let line=document.createElement("div");
+    line.className="line";
+
+    let prompt=document.createElement("span");
+    prompt.className="prompt";
+    prompt.textContent=
+        isRoot ? "root@linux:~# " : "user@linux:~$ ";
+
+    let input=document.createElement("input");
+
+    line.appendChild(prompt);
+    line.appendChild(input);
+
+    terminal.appendChild(line);
+
+    input.focus();
+
+    input.addEventListener("keydown", e=>{
+
+        if(e.key==="Enter"){
+
+            let command=input.value.trim();
+
+            line.removeChild(input);
+
+            let text=document.createElement("span");
+            text.textContent=command;
+            line.appendChild(text);
+
+            execute(command);
+
+        }
+
+    });
+
+}
+
+
+
+function requireRoot(){
+    if(!isRoot){
+        print("Permission denied: root required.");
+        return false;
+    }
+    return true;
+}
+
+
+
+function execute(cmd){
+
+    let args=cmd.split(" ");
+
+    let command=args[0];
+
+
+    switch(command){
+
+
+        case "su":
+
+            if(args[1]==="PASSWORD"){
+                isRoot=true;
+                print("Root access granted.");
+            }
+            else{
+                print("Wrong password.");
+            }
+
+        break;
+
+
+
+        case "addid":
+
+            if(!requireRoot()) break;
+
+            if(args.length < 5){
+                print("Usage: addid <ID> <x> <y> <z> <image>");
+                break;
+            }
+
+
+            let id=args[1];
+
+
+            if(database[id]){
+                print("ID already exists.");
+                break;
+            }
+
+
+            database[id]={
+                x:args[2],
+                y:args[3],
+                z:args[4],
+                image:null
+            };
+
+
+            // картинка через файл
+            if(args[5]){
+                database[id].image=args[5];
+            }
+
+
+            saveDB();
+
+            print("ID added.");
+
+        break;
+
+
+
+        case "id":
+
+            if(!args[1]){
+                print("Usage: id <ID>");
+                break;
+            }
+
+
+            let target=args[1];
+
+
+            if(!database[target]){
+                print("ID not found.");
+                break;
+            }
+
+
+            let obj=database[target];
+
+
+            print(
+`ID: ${target}
+X: ${obj.x}
+Y: ${obj.y}
+Z: ${obj.z}`
+            );
+
+
+            if(obj.image){
+                printImage(obj.image);
+            }
+
+
+            delete database[target];
+
+            saveDB();
+
+            print("ID removed from database.");
+
+        break;
+
+
+
+
+        case "removeid":
+
+            if(!requireRoot()) break;
+
+
+            if(!database[args[1]]){
+                print("ID not found.");
+                break;
+            }
+
+
+            delete database[args[1]];
+
+            saveDB();
+
+            print("Removed.");
+
+        break;
+
+
+
+
+        case "listid":
+
+            if(!requireRoot()) break;
+
+
+            let keys=Object.keys(database);
+
+
+            if(keys.length===0){
+                print("Database empty.");
+                break;
+            }
+
+
+            keys.forEach(k=>{
+                let v=database[k];
+
+                print(
+`${k}: X=${v.x} Y=${v.y} Z=${v.z}`
+                );
+
+            });
+
+        break;
+
+
+
+        case "fastfetch":
+
+            print(
+`
+        .--.
+       |o_o |
+       |:_/ |
+      //   \\ \\
+     (|     | )
+    /'\\_   _/\\
+    \\___)=(___/
+
+Hello World!
+`
+            );
+
+        break;
+
+
+
+        case "clear":
+
+            terminal.innerHTML="";
+            break;
+
+
+
+        default:
+
+            if(command!=="")
+                print(command+": command not found");
+
+    }
+
+
+    createInput();
+
+}
+
+
+
+print("Linux Terminal Emulator");
+print("Type 'fastfetch' for test.");
+print("");
+
+createInput();
+
+</script>
+
+</body>
+</html>
